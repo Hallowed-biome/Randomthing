@@ -127,7 +127,7 @@ class MainActivity : Activity() {
                 runOnUiThread {
                     if (selectedChannel?.id == channel.id) {
                         messageList?.removeAllViews()
-                        if (messages.isEmpty()) addMessage(DiscordMessage("", "Discord", "Nenhuma mensagem encontrada.", ""))
+                        if (messages.isEmpty()) addMessage(DiscordMessage("", channel.id, "Discord", "Nenhuma mensagem encontrada.", ""))
                         else messages.forEach { addMessage(it) }
                     }
                 }
