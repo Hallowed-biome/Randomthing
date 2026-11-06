@@ -33,7 +33,7 @@ class MainActivity : Activity() {
         val title = TextView(this).apply { text = "Discord Bot Manager"; textSize = 22f }
         tokenInput = EditText(this).apply {
             hint = "Bot Token"
-            singleLine = true
+            setSingleLine(true)
             inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
         }
         connectButton = Button(this).apply { text = "Conectar"; setOnClickListener { connectBot() } }
