@@ -26,6 +26,7 @@ class DiscordApi(private val token: String) {
                     val author = item.optJSONObject("author")
                     add(DiscordMessage(
                         id = item.optString("id"),
+                        channelId = channelId,
                         author = author?.optString("global_name")?.takeIf { it.isNotBlank() }
                             ?: author?.optString("username", "Desconhecido") ?: "Desconhecido",
                         content = item.optString("content").ifBlank { "[Mensagem sem texto]" },
