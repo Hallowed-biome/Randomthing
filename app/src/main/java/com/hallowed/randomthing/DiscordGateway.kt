@@ -91,7 +91,7 @@ class DiscordGateway(
     private fun identify(webSocket: WebSocket) {
         val data = JSONObject().apply {
             put("token", token)
-            put("intents", 33793)
+            put("intents", 33281)
             put("properties", JSONObject().apply {
                 put("os", "android")
                 put("browser", "DiscordBotManager")
