@@ -73,7 +73,7 @@ class MainActivity : Activity() {
             onGuildRemoved = { id -> runOnUiThread { guilds.remove(id); if (selectedGuild == null) showGuilds() } },
             onFailure = { message -> runOnUiThread { statusText.text = message; connectButton.isEnabled = true } },
             onMessage = { message -> runOnUiThread {
-                if (selectedChannel != null) addMessage(message)
+                if (selectedChannel?.id == message.channelId) addMessage(message)
             } }
         ).also { it.connect() }
     }
