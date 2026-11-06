@@ -12,13 +12,15 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 data class DiscordChannel(val id: String, val name: String, val type: Int)
 data class DiscordGuild(val id: String, val name: String, val channels: List<DiscordChannel>)
+data class DiscordMessage(val id: String, val author: String, val content: String, val timestamp: String)
 
 class DiscordGateway(
     private val token: String,
     private val onStatus: (String) -> Unit,
     private val onGuild: (DiscordGuild) -> Unit,
     private val onGuildRemoved: (String) -> Unit,
-    private val onFailure: (String) -> Unit
+    private val onFailure: (String) -> Unit,
+    private val onMessage: (DiscordMessage) -> Unit
 ) {
     private val client = OkHttpClient.Builder()
         .readTimeout(0, TimeUnit.MILLISECONDS)
@@ -67,6 +69,17 @@ class DiscordGateway(
         when (payload.optString("t")) {
             "READY" -> onStatus("Conectado! Carregando servidores...")
             "GUILD_CREATE" -> onGuild(parseGuild(payload.getJSONObject("d")))
+            "MESSAGE_CREATE" -> {
+                val data = payload.getJSONObject("d")
+                val author = data.optJSONObject("author")
+                onMessage(DiscordMessage(
+                    id = data.optString("id"),
+                    author = author?.optString("global_name")?.takeIf { !it.isNullOrBlank() }
+                        ?: author?.optString("username", "Desconhecido") ?: "Desconhecido",
+                    content = data.optString("content"),
+                    timestamp = data.optString("timestamp")
+                ))
+            }
             "GUILD_DELETE" -> {
                 val data = payload.getJSONObject("d")
                 if (!data.optBoolean("unavailable", false)) onGuildRemoved(data.optString("id"))
@@ -77,7 +90,7 @@ class DiscordGateway(
     private fun identify(webSocket: WebSocket) {
         val data = JSONObject().apply {
             put("token", token)
-            put("intents", 1)
+            put("intents", 33793)
             put("properties", JSONObject().apply {
                 put("os", "android")
                 put("browser", "DiscordBotManager")
