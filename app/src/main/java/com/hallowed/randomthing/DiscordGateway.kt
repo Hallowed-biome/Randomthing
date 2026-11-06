@@ -12,8 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 data class DiscordChannel(val id: String, val name: String, val type: Int)
 data class DiscordGuild(val id: String, val name: String, val channels: List<DiscordChannel>)
-data class DiscordMessage(val id: String, val author: String, val content: String, val timestamp: String)
-data class DiscordMessage(val id: String, val author: String, val content: String, val timestamp: String)
+data class DiscordMessage(val id: String, val channelId: String, val author: String, val content: String, val timestamp: String)
 
 class DiscordGateway(
     private val token: String,
@@ -75,17 +74,7 @@ class DiscordGateway(
                 val author = data.optJSONObject("author")
                 onMessage(DiscordMessage(
                     id = data.optString("id"),
-                    author = author?.optString("global_name")?.takeIf { !it.isNullOrBlank() }
-                        ?: author?.optString("username", "Desconhecido") ?: "Desconhecido",
-                    content = data.optString("content"),
-                    timestamp = data.optString("timestamp")
-                ))
-            }
-            "MESSAGE_CREATE" -> {
-                val data = payload.getJSONObject("d")
-                val author = data.optJSONObject("author")
-                onMessage(DiscordMessage(
-                    id = data.optString("id"),
+                    channelId = data.optString("channel_id"),
                     author = author?.optString("global_name")?.takeIf { !it.isNullOrBlank() }
                         ?: author?.optString("username", "Desconhecido") ?: "Desconhecido",
                     content = data.optString("content"),
